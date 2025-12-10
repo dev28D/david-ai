@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دافيد 28 AI - مجموعة أدوات المبدع</title>
+    <style>
+        /* تنسيقات CSS */
+        :root {
+            --primary-color: #ff0000; /* لون اليوتيوب الأحمر */
+            --secondary-color: #333;
+            --background-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-color: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #cc0000;
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 6px;
+            min-height: 50px;
+            border: 1px dashed #aaa;
+        }
+
+        #thumbnail-output img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .download-link {
+            display: inline-block;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>💎 دافيد 28 AI - مجموعة أدوات المبدع</h1>
+        
+        <div class="tools-grid">
+
+            <div class="tool-card">
+                <h2>مولد عناوين يوتيوب ✍️</h2>
+                <input type="text" id="topicInput" placeholder="اكتب فكرة الفيديو (مثلاً: الربح من الذكاء الاصطناعي)">
+                <button onclick="generateMockTitles()">توليد العناوين</button>
+                <div id="titlesOutput" class="output">سيتم عرض العناوين المقترحة هنا...</div>
+            </div>
+
+            <div class="tool-card">
+                <h2>تحميل صورة يوتيوب المصغرة 🖼️</h2>
+                <input type="text" id="youtubeUrlInput" placeholder="الصق رابط فيديو اليوتيوب هنا">
+                <button onclick="getThumbnail()">تحميل الصورة</button>
+                <div id="thumbnail-output" class="output">ستظهر الصورة هنا</div>
+            </div>
+
+            <div class="tool-card">
+                <h2>ملخص الرسائل الطويلة 📝</h2>
+                <textarea id="longTextarea" rows="4" placeholder="الصق نص الرسالة أو البريد الإلكتروني الطويل هنا..."></textarea>
+                <button onclick="summarizeMockText()">تلخيص النص</button>
+                <div id="summaryOutput" class="output">سيتم عرض الملخص في 3 نقاط...</div>
+            </div>
+            
+            <div class="tool-card">
+                <h2>محول نص إلى ملف (TXT/DOCX) 💾</h2>
+                <textarea id="fileContent" rows="4" placeholder="اكتب النص الذي تريد تحويله لملف (مثل محادثة واتساب منسوخة)"></textarea>
+                <button onclick="downloadAsText()">تحميل كملف نصي (TXT)</button>
+                <button onclick="downloadAsDocx()">تحميل كملف Word (DOCX)</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // دالة تحميل صورة مصغرة لليوتيوب (تعمل 100% في المتصفح)
+        function getThumbnail() {
+            const videoUrl = document.getElementById('youtubeUrlInput').value;
+            const videoId = extractVideoId(videoUrl); 
+            const outputDiv = document.getElementById('thumbnail-output');
+
+            if (videoId) {
+                // استخدام أعلى جودة ممكنة (maxresdefault)
+                const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                
+                outputDiv.innerHTML = `
+                    <p>أعلى جودة متاحة:</p>
+                    <img src="${thumbnailUrl}" alt="صورة مصغرة" onerror="this.onerror=null; this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg';" >
+                    <a href="${thumbnailUrl}" download="${videoId}_maxres.jpg" class="download-link" target="_blank">تحميل (${videoId}_maxres.jpg)</a>
+                `;
+            } else {
+                outputDiv.innerHTML = "<p style='color:red;'>الرجاء إدخال رابط يوتيوب صالح.</p>";
+            }
+        }
+
+        // دالة مساعدة لاستخراج ID الفيديو
+        function extractVideoId(url) {
+            const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // ----------------------------------------------------
+        // دالة محاكاة (Mock Function) لمولد العناوين (تحتاج لـ API حقيقي)
+        function generateMockTitles() {
+            const topic = document.getElementById('topicInput').value.trim();
+            const outputDiv = document.getElementById('titlesOutput');
+
+            if (topic.length < 5) {
+                outputDiv.innerHTML = "<p style='color:red;'>الرجاء إدخال فكرة واضحة للفيديو.</p>";
+                return;
+            }
+
+            // نتائج محددة مسبقاً (لأغراض العرض والتجربة)
+            const mockTitles = [
+                `🔥 كيف تبدأ الربح من ${topic} في 2025؟ (خطوات مضمونة)`,
+                `سر لا يخبرك به أحد عن ${topic} 🤫`,
+                `تحدي: هل يمكنك إتقان ${topic} في 7 أيام؟ ⏱️`,
+                `5 أدوات مجانية ستغير طريقتك في ${topic} 🚀`
+            ];
+            
+            outputDiv.innerHTML = "<h4>العناوين المقترحة (تحتاج لـ AI API حقيقي):</h4>" + mockTitles.map(title => `<li>${title}</li>`).join('');
+        }
+        
+        // ----------------------------------------------------
+        // دالة محاكاة (Mock Function) للتلخيص (تحتاج لـ API حقيقي)
+        function summarizeMockText() {
+            const longText = document.getElementById('longTextarea').value.trim();
+            const outputDiv = document.getElementById('summaryOutput');
+
+            if (longText.length < 50) {
+                outputDiv.innerHTML = "<p style='color:red;'>النص قصير جداً للتلخيص.</p>";
+                return;
+            }
+
+            // نتيجة محددة مسبقاً (لأغراض العرض والتجربة)
+            const mockSummary = [
+                "النقطة 1: أهمية المشروع الجديد وتمويله.",
+                "النقطة 2: الموعد النهائي لتسليم المرحلة الأولى هو الأسبوع القادم.",
+                "النقطة 3: مطلوب اجتماع عاجل لمراجعة الميزانية."
+            ];
+            
+            outputDiv.innerHTML = "<h4>ملخص النص (تحتاج لـ AI API حقيقي):</h4>" + mockSummary.map(point => `<li>${point}</li>`).join('');
+        }
+
+        // ----------------------------------------------------
+        // دالة محول النص إلى ملف (تعمل 100% في المتصفح)
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadAsText() {
+            const content = document.getElementById('fileContent').value;
+            downloadFile(content, 'exported_note.txt', 'text/plain');
+            alert('تم تحميل الملف بنجاح بصيغة TXT!');
+        }
+        
+        function downloadAsDocx() {
+            const content = document.getElementById('fileContent').value;
+            // DOCX معقدة، لكن يمكننا توليد ملف HTML بسيط يحمل امتداد .doc ليفتح في Word
+            const htmlContent = `<html><head><meta charset="UTF-8"></head><body>${content.replace(/\n/g, '<br>')}</body></html>`;
+            downloadFile(htmlContent, 'exported_document.doc', 'application/msword');
+            alert('تم تحميل الملف بنجاح بصيغة DOC (يفتح في Word)!');
+        }
+    </script>
+
+</body>
+</html>
